@@ -1,0 +1,59 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+    function profile() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    function active() {
+      return signedIn() && profile().active == true;
+    }
+    function admin() {
+      return active() && profile().role == 'admin';
+    }
+    function editor() {
+      return active() && profile().role in ['admin', 'backoffice'];
+    }
+
+    match /users/{userId} {
+      allow get: if signedIn() && (request.auth.uid == userId || admin());
+      allow list: if admin();
+      allow create, update, delete: if admin();
+    }
+
+    match /transactions/{transactionId} {
+      allow read: if active();
+      allow create, update, delete: if editor();
+    }
+
+    match /budgets/{budgetId} {
+      allow read: if active();
+      allow create, update, delete: if admin();
+    }
+
+    match /dataMonths/{monthId} {
+      allow read: if active();
+      allow create, update: if editor();
+      allow delete: if admin();
+    }
+
+    match /appData/masterData {
+      allow read: if active();
+      allow write: if admin();
+    }
+    match /appData/settings {
+      allow read: if active();
+      allow write: if admin();
+    }
+    match /appData/mappingMemory {
+      allow read: if active();
+      allow write: if editor();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
