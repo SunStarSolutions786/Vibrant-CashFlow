@@ -113,10 +113,15 @@ function firebaseTransactionOptions(options = {}) {
 
 function normalizeFirebaseTransaction(item) {
   const closing = item && item.closingBalance;
+  const categorized = item && item.status === TXN_STATUS.CATEGORIZED;
+  const inflowNet = categorized && item.type === TXN_TYPE.INFLOW ? Utils.netCash(item) : 0;
+  const outflowNet = categorized && item.type === TXN_TYPE.OUTFLOW ? Utils.netOutflow(item) : 0;
   return {
     ...item,
     month: Utils.monthKey(item && item.date),
     hasClosingBalance: closing !== '' && closing != null && Number.isFinite(Number(closing)),
+    inflowNet,
+    outflowNet,
   };
 }
 

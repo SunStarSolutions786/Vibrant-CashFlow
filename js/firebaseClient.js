@@ -155,31 +155,61 @@ if (window.VCF_USE_FIREBASE) {
     }
 
     async function dashboard(month, bankAccountIds) {
-      const aggregate = async (type, selectedMonth, inflow) => {
-        const filters = [{ field: 'status', value: 'categorized' }, { field: 'type', value: type }];
-        if (selectedMonth) filters.push({ field: 'month', value: selectedMonth });
+      const recent = await list('transactions', {
+        orders: [{ field: 'createdAt', direction: 'desc' }],
+        limit: 8,
+      });
+      // A brand-new production database has no transaction indexes to scan.
+      // Return the correct zero state immediately and avoid unnecessary
+      // aggregate/index requests during first-time setup.
+      if (recent.length === 0) {
+        return {
+          totalInflow: 0,
+          totalOutflow: 0,
+          monthInflow: 0,
+          monthOutflow: 0,
+          uncategorized: 0,
+          recent: [],
+          latestBalances: [],
+        };
+      }
+      const aggregate = async (selectedMonth) => {
+        const filters = selectedMonth ? [{ field: 'month', value: selectedMonth }] : [];
         const q = fs.query(fs.collection(db, 'transactions'), ...queryConstraints({ filters }));
-        const data = (await fs.getAggregateFromServer(q, { deposits: fs.sum('deposit'), withdrawals: fs.sum('withdrawal') })).data();
-        return inflow
-          ? (Number(data.deposits) || 0) - (Number(data.withdrawals) || 0)
-          : (Number(data.withdrawals) || 0) - (Number(data.deposits) || 0);
+        const data = (await fs.getAggregateFromServer(q, {
+          inflow: fs.sum('inflowNet'), outflow: fs.sum('outflowNet'),
+        })).data();
+        return { inflow: Number(data.inflow) || 0, outflow: Number(data.outflow) || 0 };
       };
       const pendingQuery = fs.query(fs.collection(db, 'transactions'), fs.where('status', '==', 'uncategorized'));
-      const [totalInflow, totalOutflow, monthInflow, monthOutflow, pending, recent] = await Promise.all([
-        aggregate('inflow', '', true), aggregate('outflow', '', false),
-        aggregate('inflow', month, true), aggregate('outflow', month, false),
+      const [totals, monthTotals, pending] = await Promise.all([
+        aggregate(''), aggregate(month),
         fs.getCountFromServer(pendingQuery),
-        list('transactions', { orders: [{ field: 'createdAt', direction: 'desc' }], limit: 8 }),
       ]);
       const latestBalances = (await Promise.all((bankAccountIds || []).map(async (accountId) => {
-        const rows = await list('transactions', {
-          filters: [{ field: 'bankAccountId', value: accountId }, { field: 'hasClosingBalance', value: true }],
-          orders: [{ field: 'date', direction: 'desc' }, { field: 'statementRowOrder', direction: 'desc' }],
-          limit: 1,
-        });
-        return rows[0] || null;
+        try {
+          const rows = await list('transactions', {
+            filters: [{ field: 'bankAccountId', value: accountId }, { field: 'hasClosingBalance', value: true }],
+            orders: [{ field: 'date', direction: 'desc' }, { field: 'statementRowOrder', direction: 'desc' }],
+            limit: 1,
+          });
+          return rows[0] || null;
+        } catch (error) {
+          // A not-yet-built optional balance index must not block the entire
+          // dashboard. Firestore logs a direct index-creation link in console.
+          console.warn('Latest bank balance query unavailable for', accountId, error);
+          return null;
+        }
       }))).filter(Boolean);
-      return { totalInflow, totalOutflow, monthInflow, monthOutflow, uncategorized: pending.data().count, recent, latestBalances };
+      return {
+        totalInflow: totals.inflow,
+        totalOutflow: totals.outflow,
+        monthInflow: monthTotals.inflow,
+        monthOutflow: monthTotals.outflow,
+        uncategorized: pending.data().count,
+        recent,
+        latestBalances,
+      };
     }
 
     async function createUser(email, password) {

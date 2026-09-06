@@ -49,8 +49,9 @@ function DashboardPage({ user, masterData, financeRevision }) {
     return () => { alive = false; };
   }, [financeRevision, masterData]);
 
-  if (loading || !masterData || !dashboard) return <PageLoader />;
+  if (loading || !masterData) return <PageLoader />;
   if (loadError) return <EmptyState icon="⚠️" title={loadError} sub="Reload the page to try again." />;
+  if (!dashboard) return <EmptyState icon="⚠️" title="Dashboard data is unavailable." sub="Reload the page to try again." />;
 
   const { totalInflow, totalOutflow, monthInflow, monthOutflow, uncategorized } = dashboard;
   const net = totalInflow - totalOutflow;
