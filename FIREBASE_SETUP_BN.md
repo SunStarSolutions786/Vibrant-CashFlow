@@ -31,6 +31,17 @@ firebase deploy --only firestore:rules,firestore:indexes,storage
 
 6. এই folder-এর সব file/folder repository root-এ upload করুন। GitHub repository → **Settings → Pages → Deploy from a branch → main / root** select করুন। Published link খুলে প্রথম admin login করুন, তারপর Master Data import করুন। Production database-এ কোনো demo transaction/master/user seed করা হয় না।
 
+## Production bundle
+
+Browser এখন `js/app.bundle.min.js` নামে precompiled production bundle load করে; runtime Babel ব্যবহার হয় না। তাই GitHub-এ এই bundle file অবশ্যই upload করবেন। ভবিষ্যতে source code বদলালে bundle নতুন করে তৈরি করতে:
+
+```text
+npm install
+npm run build
+```
+
+`node_modules` GitHub-এ upload করবেন না; `.gitignore` সেটি বাদ দেয়।
+
 ## Data layout ও cost control
 
 - প্রতিটি transaction ও budget আলাদা document; একটি row বদলালে পুরো database rewrite হয় না।
