@@ -1,0 +1,26 @@
+{
+  "name": "vibrant-cashflow",
+  "private": true,
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "test:rules": "firebase emulators:exec --only firestore --project demo-vcf \"node --test tests/rules.integration.mjs\"",
+    "test:ui": "node tests/ui.mjs",
+    "test:dist": "node tests/dist-smoke.mjs",
+    "verify": "npm test && npm run build && npm run test:dist"
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^5.0.2",
+    "esbuild": "^0.28.2",
+    "exceljs": "^4.4.0",
+    "firebase": "^12.2.1",
+    "firebase-tools": "^15.30.0",
+    "playwright": "^1.63.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
+  },
+  "overrides": {
+    "qs": "6.16.0"
+  }
+}
