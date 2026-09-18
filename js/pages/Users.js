@@ -63,10 +63,13 @@ function UsersPage({ user, settings, reloadSettings }) {
 
   return (
     <div>
-      <div className="toolbar">
-        <div className="spacer" />
-        <button className="btn btn-secondary" onClick={() => setModal('settings')}>⚙️ Settings</button>
-        <button className="btn btn-primary" onClick={() => setModal('add')}>+ Add User</button>
+      <div className="page-bar">
+        <div className="page-bar-row">
+          <span className="cell-muted">{users.length} user{users.length === 1 ? '' : 's'}</span>
+          <div className="spacer" />
+          <button className="btn btn-secondary" onClick={() => setModal('settings')}>⚙️ Settings</button>
+          <button className="btn btn-primary" onClick={() => setModal('add')}>+ Add User</button>
+        </div>
       </div>
 
       <div className="table-wrap">

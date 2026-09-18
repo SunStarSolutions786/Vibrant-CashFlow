@@ -116,24 +116,28 @@ function CategorizePage({ user, masterData, settings }) {
     }
   }
   return <div>
-    <SectionCard>
-      <div className="category-bulk">
-        <div className="category-bulk-heading"><strong>Categorize this page</strong><span className="help-text">Choose a category, then apply it to the visible rows.</span></div>
+    <div className="page-bar">
+      <div className="page-bar-row">
+        <Tabs disabled={saving} items={[{ value: 'pending', label: 'Pending' }, { value: 'all', label: 'All Transactions' }]} value={tab} onChange={(value) => { setTab(value); resetPages(); }} />
+        <label>From <input aria-label="Transactions from date" className="input" type="date" value={fromDate} disabled={saving} onChange={(e) => { setFromDate(e.target.value); resetPages(); }} /></label>
+        <label>To <input aria-label="Transactions to date" className="input" type="date" value={toDate} disabled={saving} onChange={(e) => { setToDate(e.target.value); resetPages(); }} /></label>
+        <form className="page-bar-search" onSubmit={(e) => { e.preventDefault(); setSearch(searchText); resetPages(); }}>
+          <input aria-label="Search all transactions" className="input" placeholder="Particulars, remarks, bank or ID" value={searchText} disabled={saving} onChange={(e) => setSearchText(e.target.value)} />
+          <button className="btn btn-secondary" disabled={saving}>Search</button>
+        </form>
+        <div className="spacer" />
+        <button className="btn btn-primary" onClick={saveAll} disabled={saving || loading}>{saving ? 'Saving…' : `Save changes${editCount ? ` (${editCount} drafts)` : ''}`}</button>
+        <button className="btn btn-ghost" disabled={saving} onClick={discard}>{editCount ? 'Discard drafts & reload' : 'Refresh'}</button>
+      </div>
+      <div className="page-bar-row">
+        <span className="cell-muted">Apply to page</span>
         <CategoryPicker masterData={masterData} value={bulk} onChange={setBulk} disabled={saving} />
         <button className="btn btn-secondary" disabled={saving || loading} onClick={applyBulk}>Apply to this page</button>
+        <div className="spacer" />
+        <span className="cell-muted">Category input</span>
+        <Tabs disabled={saving} items={[{ value: 'search', label: 'Single search' }, { value: 'steps', label: 'Step by step' }]} value={selectionMode} onChange={setSelectionMode} />
       </div>
-    </SectionCard>
-    <div className="toolbar"><Tabs disabled={saving} items={[{ value: 'pending', label: 'Pending' }, { value: 'all', label: 'All Transactions' }]} value={tab} onChange={(value) => { setTab(value); resetPages(); }} />
-      <label>From <input aria-label="Transactions from date" className="input" type="date" value={fromDate} disabled={saving} onChange={(e) => { setFromDate(e.target.value); resetPages(); }} /></label>
-      <label>To <input aria-label="Transactions to date" className="input" type="date" value={toDate} disabled={saving} onChange={(e) => { setToDate(e.target.value); resetPages(); }} /></label>
-      <form onSubmit={(e) => { e.preventDefault(); setSearch(searchText); resetPages(); }} style={{ display: 'flex', gap: 8 }}>
-        <input aria-label="Search all transactions" className="input" placeholder="Particulars, remarks, bank or ID" value={searchText} disabled={saving} onChange={(e) => setSearchText(e.target.value)} />
-        <button className="btn btn-secondary" disabled={saving}>Search</button></form>
-      <button className="btn btn-primary" onClick={saveAll} disabled={saving || loading}>{saving ? 'Saving…' : `Save changes${editCount ? ` (${editCount} drafts)` : ''}`}</button>
-      <button className="btn btn-ghost" disabled={saving} onClick={discard}>{editCount ? 'Discard drafts & reload' : 'Refresh'}</button>
     </div>
-    <div className="toolbar category-view-switch"><span className="cell-muted">Category input</span><Tabs disabled={saving} items={[{ value: 'search', label: 'Single search' }, { value: 'steps', label: 'Step by step' }]} value={selectionMode} onChange={setSelectionMode} /></div>
-    <p className="help-text">50 matches per page. Search scans all matching dates; use Continue search when more records remain. Drafts are kept when switching tabs or pages.</p>
     {error && <p role="alert" className="error-text">{error}</p>}
     {loading ? <PageLoader /> : <React.Fragment>
       {result.rows.length === 0 ? <EmptyState title={result.hasMore ? 'No matches in this part of the search' : 'No matching transactions'} sub={result.hasMore ? 'Continue searching the remaining records below.' : ''} /> :

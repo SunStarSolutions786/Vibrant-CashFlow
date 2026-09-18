@@ -39,7 +39,7 @@ The same permissions are enforced on the server by `firestore.rules`.
 
 ## Cloudflare Pages
 
-Settings → Build: repository `SunStarSolutions786/Vibrant-CashFlow`, production branch `main`, build command `exit 0`, build output `dist`, root directory empty. Every upload to `main` publishes automatically. After the first deployment, sign in as the administrator and import Master Data from **Master Data → Download Template → Import**.
+Settings → Build: repository `SunStarSolutions786/Vibrant-CashFlow`, production branch `main`, build command `exit 0`, build output `dist`, root directory empty. Every upload to `main` publishes automatically. After the first deployment, sign in as the administrator and import Master Data from **Master Data → Template → Import**.
 
 ## Changing the code
 

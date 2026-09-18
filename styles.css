@@ -154,7 +154,7 @@ button { font-family: inherit; }
 .user-meta b { display: block; font-size: 12.5px; }
 .user-meta span { font-size: 11px; color: var(--text-muted); }
 
-.page-content { padding: 24px; max-width: 1440px; width: 100%; margin: 0 auto; }
+.page-content { padding: 16px 24px 24px; max-width: 1440px; width: 100%; margin: 0 auto; }
 
 /* ============================================================================
    Buttons
@@ -441,20 +441,35 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
 .category-toggle { margin-top: 6px; color: var(--primary); }
 .category-steps { margin-top: 12px; animation: slideUp .18s ease both; }
 .category-steps .field { min-width: 145px; }
-.category-bulk { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-start; }
-.category-bulk-heading { display: flex; flex-direction: column; gap: 4px; flex: 0 1 220px; padding-top: 4px; }
-.category-bulk .category-picker { flex: 1 1 330px; }
-.category-cell { min-width: 290px; max-width: 420px; }
-.category-view-switch { justify-content: flex-end; margin-bottom: 10px; }
+/* Compact control bar shared by Categorize, Master Data and User Management */
+.page-bar {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm); padding: 10px 12px; margin-bottom: 12px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.page-bar-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.page-bar-row .spacer { flex: 1; }
+.page-bar-row > label { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--text-muted); white-space: nowrap; }
+.page-bar-row input[type="date"] { width: 148px; }
+.page-bar-search { display: flex; gap: 6px; flex: 1 1 260px; min-width: 200px; }
+.page-bar-row > .input { flex: 0 1 170px; min-width: 130px; }
+.page-bar-row .btn { white-space: nowrap; }
+.page-bar-search .input { flex: 1; min-width: 0; }
+.page-bar-row .category-picker { flex: 1 1 340px; min-width: 220px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.page-bar-row .category-picker > .sselect { flex: 1 1 220px; min-width: 0; }
+.page-bar-row .category-toggle { white-space: nowrap; }
+.page-bar-row .category-steps { flex-basis: 100%; }
 .dtable tbody tr { transition: background .12s ease; }
 .dtable td { vertical-align: middle; }
 .dtable th { font-family: inherit; }
 .dtable .cell-num { font-variant-numeric: tabular-nums; }
 @media (max-width: 600px) {
-  .category-bulk-heading, .category-bulk .category-picker { flex-basis: 100%; }
-  .category-bulk > .btn { width: 100%; }
+  .page-bar-row .category-picker, .page-bar-search { flex-basis: 100%; }
+  .page-bar-row > .spacer { display: none; }
   .category-steps { display: grid; grid-template-columns: 1fr; }
-  .category-view-switch { justify-content: space-between; }
+  .page-bar-row { gap: 6px; }
+  .page-bar-row > label { flex: 1 1 130px; }
+  .page-bar-row input[type="date"] { width: 100%; }
   .optional-category { padding: 12px; }
   .toast-stack { right: 12px; left: 12px; }
   .toast { min-width: 0; }

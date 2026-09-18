@@ -284,29 +284,26 @@ function MasterDataPage({ masterData, reloadMasterData }) {
 
   return (
     <div>
-      <SectionCard>
-        <div className="toolbar" style={{ marginBottom: 0 }}>
-          <button type="button" className="btn btn-secondary" onClick={downloadTemplate} disabled={busy}>⬇️ Download Template</button>
+      <div className="page-bar">
+        <div className="page-bar-row">
+          <Tabs items={[{ value: 'banks', label: 'Bank Accounts' }, { value: 'verticals', label: 'Verticals' }, { value: 'classify', label: 'Heads & Sub-heads' }]} value={tab} onChange={setTab} />
+          <input aria-label="Search master data" className="input" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
+          <div className="spacer" />
+          <button type="button" className="btn btn-secondary" title="Download the Excel import template" onClick={downloadTemplate} disabled={busy}>⬇️ Template</button>
           <label className={Utils.classNames('btn btn-secondary', busy && 'disabled')} style={{ cursor: busy ? 'not-allowed' : 'pointer' }} tabIndex={busy ? -1 : 0}
             onKeyDown={(e) => { if (!busy && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); fileRef.current && fileRef.current.click(); } }}>
             {busy ? <React.Fragment><span className="spinner"></span> Working…</React.Fragment> : '⬆️ Import'}
             <input ref={fileRef} className="visually-hidden" tabIndex="-1" type="file" accept=".xlsx,.xls" onChange={onImportFile} disabled={busy} />
           </label>
+          {tab === 'classify' ? (
+            <React.Fragment>
+              <button className="btn btn-secondary" onClick={() => setModal({ kind: 'heads' })}>+ Add Head</button>
+              <button className="btn btn-primary" onClick={() => setModal({ kind: 'subheads' })}>+ Add Sub-head</button>
+            </React.Fragment>
+          ) : (
+            <button className="btn btn-primary" onClick={() => setModal({ kind: tab })}>+ Add</button>
+          )}
         </div>
-      </SectionCard>
-
-      <div className="toolbar">
-        <Tabs items={[{ value: 'banks', label: 'Bank Accounts' }, { value: 'verticals', label: 'Verticals' }, { value: 'classify', label: 'Heads & Sub-heads' }]} value={tab} onChange={setTab} />
-        <div className="spacer" />
-        <input className="input" style={{ maxWidth: 240 }} placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
-        {tab === 'classify' ? (
-          <React.Fragment>
-            <button className="btn btn-secondary" onClick={() => setModal({ kind: 'heads' })}>+ Add Head</button>
-            <button className="btn btn-primary" onClick={() => setModal({ kind: 'subheads' })}>+ Add Sub-head</button>
-          </React.Fragment>
-        ) : (
-          <button className="btn btn-primary" onClick={() => setModal({ kind: tab })}>+ Add</button>
-        )}
       </div>
 
       {tab === 'verticals' && (

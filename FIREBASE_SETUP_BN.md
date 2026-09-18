@@ -57,7 +57,7 @@ npx firebase-tools deploy --only firestore:rules,firestore:indexes,storage
 
 GitHub-এর `main` branch-এ upload করলেই Cloudflare নিজে থেকে নতুন version publish করে। Build output অবশ্যই `dist` থাকবে — না হলে "could not start" error দেখাবে।
 
-প্রথমবার link খুলে Administrator login করুন, তারপর **Master Data → Download Template → Import** করে Bank Accounts, Verticals, Heads ও Sub-heads যোগ করুন।
+প্রথমবার link খুলে Administrator login করুন, তারপর **Master Data → Template → Import** করে Bank Accounts, Verticals, Heads ও Sub-heads যোগ করুন।
 
 ## ৪. Code পরিবর্তনের পর নতুন build
 
