@@ -366,11 +366,9 @@ function MasterDataPage({ masterData, reloadMasterData }) {
         </table></div>
       )}
 
-      <div className="toolbar" style={{ justifyContent: 'flex-end', marginTop: 12 }}>
-        <span className="cell-muted">{totalRows} items · Page {currentPage + 1}</span>
-        <button className="btn btn-secondary" disabled={currentPage === 0 || busy} onClick={() => setPage(currentPage - 1)}>Prev</button>
-        <button className="btn btn-secondary" disabled={(currentPage + 1) * 50 >= totalRows || busy} onClick={() => setPage(currentPage + 1)}>Next</button>
-      </div>
+      <Pager summary={totalRows ? `${currentPage * 50 + 1}–${Math.min(totalRows, currentPage * 50 + 50)} of ${totalRows} · Page ${currentPage + 1} of ${Math.ceil(totalRows / 50)}` : ''}
+        canPrev={currentPage > 0} canNext={(currentPage + 1) * 50 < totalRows} disabled={busy}
+        onPrev={() => setPage(currentPage - 1)} onNext={() => setPage(currentPage + 1)} />
       {modal && <MasterFormModal kind={modal.kind} item={modal.item} presetHeadId={modal.presetHeadId} md={md}
         saving={busy}
         onClose={() => { if (!busy) setModal(null); }}

@@ -380,6 +380,21 @@ function DataFreshness({ loadedAt, onRefresh, busy }) {
   );
 }
 
+// Pagination bar shared by Categorize and Master Data. Buttons appear only when
+// there is another page; the whole bar is hidden when there is nothing to show.
+function Pager({ summary, canPrev, canNext, onPrev, onNext, nextLabel = 'Next', disabled }) {
+  if (!summary && !canPrev && !canNext) return null;
+  return (
+    <div className="pager">
+      {summary && <span className="pager-summary">{summary}</span>}
+      {(canPrev || canNext) && <React.Fragment>
+        <button type="button" className="btn btn-secondary btn-sm" disabled={disabled || !canPrev} onClick={onPrev}>← Prev</button>
+        <button type="button" className="btn btn-secondary btn-sm" disabled={disabled || !canNext} onClick={onNext}>{nextLabel} →</button>
+      </React.Fragment>}
+    </div>
+  );
+}
+
 // Variance helper shared by Outflow analysis + export (green/amber/red).
 function varianceTone(budget, actual) {
   const b = Number(budget) || 0;

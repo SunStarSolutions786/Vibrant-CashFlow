@@ -126,8 +126,8 @@ function CategorizePage({ user, masterData, settings }) {
           <button className="btn btn-secondary" disabled={saving}>Search</button>
         </form>
         <div className="spacer" />
-        <button className="btn btn-primary" onClick={saveAll} disabled={saving || loading}>{saving ? 'Saving…' : `Save changes${editCount ? ` (${editCount} drafts)` : ''}`}</button>
-        <button className="btn btn-ghost" disabled={saving} onClick={discard}>{editCount ? 'Discard drafts & reload' : 'Refresh'}</button>
+        <button className="btn btn-primary" onClick={saveAll} disabled={saving || loading}>{saving ? 'Saving…' : editCount ? `Save ${editCount} change${editCount === 1 ? '' : 's'}` : 'Save changes'}</button>
+        <button className="btn btn-ghost" disabled={saving} onClick={discard} title={editCount ? 'Discard all unsaved category changes and reload' : 'Reload transactions'}>{editCount ? 'Discard drafts' : 'Refresh'}</button>
       </div>
       <div className="page-bar-row">
         <span className="cell-muted">Apply to page</span>
@@ -151,10 +151,10 @@ function CategorizePage({ user, masterData, settings }) {
               <button className="btn btn-ghost btn-sm" disabled={saving || !!edits[t.id]} onClick={() => setEditing(t)}>Details / Correct</button></td>
           </tr>)}
         </tbody></table></div>}
-      <div className="toolbar" style={{ justifyContent: 'flex-end', marginTop: 12 }}>
-        <button className="btn btn-secondary" disabled={page === 0 || saving} onClick={() => setPage((n) => n - 1)}>← Prev</button>
-        <span>Page {page + 1}</span><button className="btn btn-secondary" disabled={!result.hasMore || saving} onClick={() => { setCursors((old) => [...old.slice(0, page + 1), result.cursor]); setPage((n) => n + 1); }}>{search ? 'Continue search →' : 'Next →'}</button>
-      </div>
+      <Pager summary={result.rows.length || page > 0 || result.hasMore ? `Page ${page + 1}` : ''}
+        canPrev={page > 0} canNext={result.hasMore} disabled={saving} nextLabel={search ? 'Continue search' : 'Next'}
+        onPrev={() => setPage((n) => n - 1)}
+        onNext={() => { setCursors((old) => [...old.slice(0, page + 1), result.cursor]); setPage((n) => n + 1); }} />
     </React.Fragment>}
     {editing && <TransactionEditor record={editing} user={user} masterData={masterData} settings={settings} onClose={() => setEditing(null)} onSaved={(row) => { acceptSaved([row]); setEditing(null); setReload((n) => n + 1); }} />}
   </div>;
