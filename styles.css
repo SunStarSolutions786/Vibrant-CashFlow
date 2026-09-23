@@ -73,8 +73,10 @@ button { font-family: inherit; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .fade-in { animation: fadeIn .25s ease both; }
-.slide-up { animation: slideUp .3s cubic-bezier(.2,.7,.3,1) both; }
-.slide-down { animation: slideDown .18s ease both; }
+/* 'backwards' fill: no transform is left behind after the animation, so fixed-position
+   elements inside animated containers are still positioned against the window. */
+.slide-up { animation: slideUp .3s cubic-bezier(.2,.7,.3,1) backwards; }
+.slide-down { animation: slideDown .18s ease backwards; }
 
 /* ============================================================================
    App shell
@@ -420,7 +422,7 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
 /* Quiet surfaces, clear focus and short transitions keep dense finance screens usable. */
 :root { --bg: #f5f6fa; --primary: #5145cd; --primary-dark: #4034b0; --radius: 12px; --radius-sm: 8px; --shadow-sm: 0 2px 8px rgba(25,35,65,.035); }
 .topbar { background: rgba(255,255,255,.95); }
-.page-content { animation: slideUp .24s ease both; }
+.page-content { animation: slideUp .24s ease backwards; }
 .card { box-shadow: 0 2px 10px rgba(25,35,65,.025); border-color: #e7eaf1; }
 .btn { transition: background .16s ease, box-shadow .16s ease, transform .16s ease; }
 .btn:not(:disabled):active { transform: translateY(1px); }
@@ -439,7 +441,7 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
 .category-opt-in .cell-muted { margin-left: auto; font-weight: 400; }
 .category-picker { min-width: 0; }
 .category-toggle { margin-top: 6px; color: var(--primary); }
-.category-steps { margin-top: 12px; animation: slideUp .18s ease both; }
+.category-steps { margin-top: 12px; animation: slideUp .18s ease backwards; }
 .category-steps .field { min-width: 145px; }
 /* Pagination bar under tables */
 .pager { display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin-top: 10px; }

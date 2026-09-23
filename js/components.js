@@ -260,7 +260,9 @@ function Modal({ title, onClose, children, footer, wide }) {
     document.addEventListener('keydown', onKey);
     return () => { document.removeEventListener('keydown', onKey); if (previous && previous.focus) previous.focus(); };
   }, []);
-  return (
+  // Rendered on <body> so the overlay always covers the whole window, whatever
+  // styling the page underneath uses.
+  return ReactDOM.createPortal(
     <div className="modal-overlay" onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       <div ref={boxRef} role="dialog" aria-modal="true" aria-labelledby={titleId} className={Utils.classNames('modal-box', 'slide-up', wide && 'wide')}>
         <div className="modal-header">
@@ -270,7 +272,8 @@ function Modal({ title, onClose, children, footer, wide }) {
         <div className="modal-body">{children}</div>
         {footer && <div className="modal-footer">{footer}</div>}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 
